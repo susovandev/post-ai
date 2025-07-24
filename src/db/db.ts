@@ -1,17 +1,25 @@
-import { config } from '@/config/_config';
+/**
+ * External Modules
+ */
 import mongoose from 'mongoose';
+
+/**
+ * Custom Module
+ */
+import { config } from '@/config/_config';
+import Logger from '@/utils/logger';
 
 const connectToDB = async () => {
     try {
         const connectionInstance = await mongoose.connect(config.DATABASE_URL);
-        console.log('Connected to MongoDB');
-        console.log(
+        Logger.info('Connected to MongoDB');
+        Logger.info(
             `Database name: ${connectionInstance.connection.db?.databaseName}`,
         );
-        console.log(`Database host: ${connectionInstance.connection.host}`);
-        console.log(`Database port: ${connectionInstance.connection.port}`);
+        Logger.info(`Database host: ${connectionInstance.connection.host}`);
+        Logger.info(`Database port: ${connectionInstance.connection.port}`);
     } catch (error) {
-        console.error('Error connecting to MongoDB:', error);
+        Logger.error('Error connecting to MongoDB:', error);
         process.exit(1);
     }
 };

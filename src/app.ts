@@ -1,5 +1,5 @@
 /**
- *
+ * External Modules
  */
 import express, { Application, NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
@@ -9,8 +9,11 @@ import cookieParser from 'cookie-parser';
 /**
  * Custom Modules
  */
-import connectToDB from './db/db';
-import appRoutes from './routes';
+import connectToDB from '@/db/db';
+import appRoutes from '@/routes';
+import morganConfig from '@/config/morgan.config';
+import Logger from '@/utils/logger';
+import { config } from '@/config/_config';
 
 export class App {
     app: Application;
@@ -30,6 +33,7 @@ export class App {
         await connectToDB();
     }
     private setupMiddlewares() {
+        this.app.use(morganConfig);
         this.app.use(helmet());
         this.app.use(express.json({ strict: true, limit: '100kb' }));
         this.app.use(express.urlencoded({ extended: true, limit: '100kb' }));
@@ -55,8 +59,10 @@ export class App {
     }
 
     private serverListen() {
-        this.app.listen(4000, () => {
-            console.log(`🚀 Server running at: http://localhost:${4000}`);
+        this.app.listen(config.PORT, () => {
+            Logger.debug(
+                `🚀 Server running at: http://localhost:${config.PORT}`,
+            );
         });
     }
 }
