@@ -1,9 +1,13 @@
 /**
- *
+ * External Modules
+ */
+import { Schema, model } from 'mongoose';
+import bcrypt from 'bcrypt';
+
+/**
+ * Custom Modules
  */
 import { IUserDocument } from '@/interfaces/user.interface';
-import { Schema, model } from 'mongoose';
-
 const userSchema: Schema<IUserDocument> = new Schema(
     {
         username: {
@@ -40,6 +44,13 @@ const userSchema: Schema<IUserDocument> = new Schema(
 );
 
 userSchema.index({ username: 1, email: 1 }, { unique: true });
+userSchema.pre('save', async function (next) {
+    if (this.isModified('password')) {
+        const genSalt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, genSalt);
+    }
+    next();
+});
 
 const userModel = model<IUserDocument>('User', userSchema);
 export default userModel;

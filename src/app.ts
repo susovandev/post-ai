@@ -3,6 +3,7 @@
  */
 import express, { Application, NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 
 /**
@@ -38,6 +39,7 @@ export class App {
     private setupMiddlewares() {
         this.app.use(morganConfig);
         this.app.use(helmet());
+        this.app.use(compression());
         this.app.use(express.json({ strict: true, limit: '100kb' }));
         this.app.use(express.urlencoded({ extended: true, limit: '100kb' }));
         this.app.use(cookieParser());
