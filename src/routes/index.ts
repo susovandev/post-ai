@@ -8,6 +8,7 @@ import { StatusCodes } from 'http-status-codes';
  * Custom Modules
  */
 import authRouter from './auth.routes';
+import userRouter from './user.routes';
 
 const appRoutes = (app: Application) => {
     app.get('/', (_: Request, res: Response) => {
@@ -18,6 +19,7 @@ const appRoutes = (app: Application) => {
         });
     });
     app.use('/api/v1/auth', authRouter);
+    app.use('/api/v1/users', userRouter);
 };
 
 export default appRoutes;
