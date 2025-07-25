@@ -3,11 +3,13 @@
  */
 import { Schema, model } from 'mongoose';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 /**
  * Custom Modules
  */
 import { IUserDocument } from '@/interfaces/user.interface';
+import { config } from '@/config/_config';
 const userSchema: Schema<IUserDocument> = new Schema(
     {
         username: {
@@ -52,5 +54,19 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
+userSchema.methods.isPasswordMatch = async function (password: string) {
+    return await bcrypt.compare(password, this.password);
+};
+
+userSchema.methods.generateAccessToken = function () {
+    return jwt.sign(
+        { _id: this._id },
+        config.ACCESS_TOKEN_SECRET as jwt.Secret,
+        {
+            expiresIn:
+                config.ACCESS_TOKEN_EXPIRES_IN as jwt.SignOptions['expiresIn'],
+        },
+    );
+};
 const userModel = model<IUserDocument>('User', userSchema);
 export default userModel;

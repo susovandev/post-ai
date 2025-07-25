@@ -8,6 +8,10 @@ interface IUserDocument extends Document {
     password: string;
     posts: string[];
     totalPosts: number;
+    createdAt: Date;
+    updatedAt: Date;
+    isPasswordMatch(password: string): Promise<boolean>;
+    generateAccessToken(): string;
 }
 
 export { IUserDocument };

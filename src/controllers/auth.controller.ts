@@ -9,8 +9,13 @@ import { StatusCodes } from 'http-status-codes';
  */
 import asyncHandler from '@/utils/asyncHandler';
 import ApiResponse from '@/utils/apiResponse';
-import { ICreateUserPayload } from '@/interfaces/auth.interface';
+import {
+    ICreateUserPayload,
+    ILoginUserPayload,
+} from '@/interfaces/auth.interface';
 import AuthService from '@/services/auth.service';
+import { config } from '@/config/_config';
+import timeStringToSeconds from '@/utils/timeUtils';
 
 class AuthController {
     public static register = asyncHandler(
@@ -30,6 +35,38 @@ class AuthController {
                     },
                 ),
             );
+        },
+    );
+
+    public static login = asyncHandler(
+        async (
+            req: Request<unknown, unknown, ILoginUserPayload>,
+            res: Response,
+        ) => {
+            const { user, accessToken } = await AuthService.loginUser(req.body);
+            
+            const accessTokenExpiresIn = timeStringToSeconds(
+                config.ACCESS_TOKEN_EXPIRES_IN,
+            );
+            res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: config.NODE_ENV === 'production' ? true : false,
+                sameSite: 'none',
+                maxAge: accessTokenExpiresIn * 1000,
+            })
+                .status(StatusCodes.OK)
+                .json(
+                    new ApiResponse(
+                        StatusCodes.OK,
+                        `Welcome back, ${user?.username}!`,
+                        {
+                            _id: user?._id,
+                            username: user?.username,
+                            email: user?.email,
+                            accessToken: accessToken,
+                        },
+                    ),
+                );
         },
     );
 }

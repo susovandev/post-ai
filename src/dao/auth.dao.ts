@@ -10,6 +10,7 @@ import userModel from '@/models/user.model';
 
 class AuthDAO {
     async checkUserExits(username: string, email: string) {
+        console.log(username, email);
         return await userModel.findOne({
             $or: [{ username }, { email }],
         });

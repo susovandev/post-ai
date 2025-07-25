@@ -22,4 +22,13 @@ authRouter
         schemaValidator(authValidation.registerSchema),
         authController.register,
     );
+
+/**
+ * Login
+ * @route POST /api/v1/auth/login
+ * @access Public
+ */
+authRouter
+    .route('/login')
+    .post(schemaValidator(authValidation.loginSchema), authController.login);
 export default authRouter;
