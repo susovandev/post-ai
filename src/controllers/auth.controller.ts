@@ -44,7 +44,7 @@ class AuthController {
             res: Response,
         ) => {
             const { user, accessToken } = await AuthService.loginUser(req.body);
-            
+
             const accessTokenExpiresIn = timeStringToSeconds(
                 config.ACCESS_TOKEN_EXPIRES_IN,
             );
@@ -65,6 +65,19 @@ class AuthController {
                             email: user?.email,
                             accessToken: accessToken,
                         },
+                    ),
+                );
+        },
+    );
+
+    public static logout = asyncHandler(
+        async (_req: Request, res: Response) => {
+            res.clearCookie('accessToken')
+                .status(StatusCodes.OK)
+                .json(
+                    new ApiResponse(
+                        StatusCodes.OK,
+                        `You have logged out successfully!`,
                     ),
                 );
         },

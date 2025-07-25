@@ -9,6 +9,7 @@ import { Router } from 'express';
 import schemaValidator from '@/middlewares/validation.middleware';
 import authValidation from '@/validations/auth.validation';
 import authController from '@/controllers/auth.controller';
+import authMiddleware from '@/middlewares/auth.middleware';
 
 const authRouter: Router = Router();
 /**
@@ -31,4 +32,11 @@ authRouter
 authRouter
     .route('/login')
     .post(schemaValidator(authValidation.loginSchema), authController.login);
+
+/**
+ * Logout
+ * @route POST /api/v1/auth/logout
+ * @access Private
+ */
+authRouter.route('/logout').post(authMiddleware, authController.logout);
 export default authRouter;
